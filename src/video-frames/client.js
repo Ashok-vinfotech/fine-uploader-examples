@@ -7,10 +7,6 @@
         timeInSecs = [],
         durations = [];
 
-    function isTouchDevice() {
-        return "ontouchstart" in window || navigator.msMaxTouchPoints > 0;
-    }
-
     function openLargerPreview($uploadContainer, size, fileId, name) {
         var $modal = $("#previewDialog"),
             $image = $("#previewContainer"),
