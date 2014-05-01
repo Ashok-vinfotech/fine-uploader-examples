@@ -33,8 +33,14 @@
             .modal("show");
     }
 
+    function showError(message) {
+        $("#errorDialog").find(".error-message").text(message);
+        $("#errorDialog").modal("show");
+    }
+
     $(function() {
-        var descriptions = [];
+        var descriptions = [],
+            frameGrab;
 
         $("#uploader").fineUploader({
             debug: true,
@@ -80,8 +86,7 @@
             },
 
             showMessage: function(message) {
-                $("#errorDialog").find(".error-message").text(message);
-                $("#errorDialog").modal("show");
+                showError(message);
             },
 
             callbacks: {
@@ -107,7 +112,28 @@
                 }
             });
 
-        $("#video").hide();
+        $(".grab-frame").click(function() {
+            if (!frameGrab) {
+                //TODO Replace window.prompt with nicer-looking modal
+                var framerate = window.prompt("Please specify framerate");
+
+                if (!framerate) {
+                    return;
+                }
+
+                frameGrab = new FrameGrab({video: $("#video")[0], frame_rate: framerate});
+            }
+
+            frameGrab.grab_now("blob").then(
+                function success(blob) {
+                    $("#uploader").fineUploader("addBlobs", blob);
+                },
+
+                function failure(reason) {
+                    showError(reason);
+                }
+            )
+        });
 
         $("#video-drop-zone").fineUploaderDnd({
             classes: {
@@ -117,13 +143,12 @@
             .on("processingDroppedFilesComplete", function(event, files, dropTarget) {
                 FrameGrab.make_video(files[0], $("#video")[0]).then(
                     function success() {
+                        frameGrab = null;
                         $("#video-drop-zone").removeClass("empty");
-                        $("#video").show();
                     },
 
                     function failure() {
-                        $("#errorDialog").find(".error-message").text("Unsupported video type");
-                        $("#errorDialog").modal("show");
+                        showError("Unsupported video type");
                     }
                 )
             });

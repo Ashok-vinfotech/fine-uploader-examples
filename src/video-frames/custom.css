@@ -28,6 +28,30 @@ See the HTML file comments for more details.
     text-align: center;
 }
 
+#video-drop-zone.empty #video-container
+{
+    display: none;
+}
+
+#video-container .glyphicon
+{
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+#video-drop-zone #video-container
+{
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+#video-drop-zone #video-container #video
+{
+    display: block;
+    margin: 0 auto;
+}
+
 #video-drop-zone .drop-zone-text
 {
     display: none;
@@ -53,15 +77,9 @@ See the HTML file comments for more details.
     opacity: .7;
 }
 
-.qq-upload-drop-area-active #video
+.qq-upload-drop-area-active #video-container
 {
     z-index: 9;
-}
-
-#video
-{
-    display: block;
-    margin: 0 auto;
 }
 
 LI.file-container
