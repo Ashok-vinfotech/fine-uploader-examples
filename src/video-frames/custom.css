@@ -105,10 +105,10 @@ LI.file-container
     text-align: left;
 }
 
-.qq-uploader
+#uploader
 {
-    margin: 20px 0;
-    width: auto;
+    width: 625px;
+    margin: 0 auto;
 }
 
 .qq-upload-success .edit-description
