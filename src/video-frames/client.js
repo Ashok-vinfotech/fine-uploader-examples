@@ -37,6 +37,14 @@
             .modal("show");
     }
 
+    function showPleaseWait() {
+        $("#pleaseWaitDialog").modal("show");
+    }
+
+    function hidePleaseWait() {
+        $("#pleaseWaitDialog").modal("hide");
+    }
+
     function showError(message) {
         $("#errorDialog").find(".error-message").text(message);
         $("#errorDialog").modal("show");
@@ -225,9 +233,13 @@
                 imageCount = parseInt(window.prompt("How many images?"));
 
                 if (imageCount > 0) {
+                    showPleaseWait();
+
                     frameGrab.make_story("blob", imageCount).then(
                         function success(results) {
                             $.each(results, function() {
+                                hidePleaseWait();
+
                                 var timecode = FrameGrab.secs_to_timecode(this.time, framerates[currentVideoId]);
 
                                 // setParams is a bit inflexible in FU.
@@ -245,6 +257,7 @@
                         },
 
                         function failure(reason) {
+                            hidePleaseWait();
                             showError(reason);
                         }
                     )
