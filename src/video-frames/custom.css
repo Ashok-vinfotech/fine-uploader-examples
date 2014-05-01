@@ -72,11 +72,6 @@ See the HTML file comments for more details.
     color: #cccccc;
 }
 
-#previewDialog .modal-dialog
-{
-    width: 800px;
-}
-
 .qq-upload-drop-area-active
 {
     z-index: 10;

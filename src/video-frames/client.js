@@ -7,36 +7,6 @@
         timeInSecs = [],
         durations = [];
 
-    function openLargerPreview($uploadContainer, size, fileId, name) {
-        var $modal = $("#previewDialog"),
-            $image = $("#previewContainer"),
-            $progress = $modal.find(".progress");
-
-       $modal.find(".modal-title").text("Generating Preview for " + name);
-        $image.hide();
-        $progress.show();
-
-        $modal
-            .one("shown.bs.modal", function() {
-                $image.removeAttr("src");
-                // setTimeout: Attempt to ensure img.onload is not called after we attempt to draw thumbnail
-                // but before picture is transferred to img element as a result of resetting the img.src above.
-                setTimeout(function() {
-                    $uploadContainer.fineUploader("drawThumbnail", fileId, $image, size).then(function() {
-                        $modal.find(".modal-title").text("Preview for " + name);
-
-                        $progress.hide();
-                        $image.show();
-                    },
-                    function() {
-                        $progress.hide();
-                        $modal.find(".modal-title").text("Preview not available");
-                    });
-                }, 0);
-            })
-            .modal("show");
-    }
-
     function showPleaseWait() {
         $("#pleaseWaitDialog").modal("show");
     }
@@ -96,6 +66,17 @@
         $(".qq-upload-list-selector").prepend(ordered);
     }
 
+    function updateGallery() {
+        setTimeout(function() {
+            $('.qq-thumbnail-selector').magnificPopup({
+                type:'image',
+                gallery: {
+                    enabled: true
+                }
+            }, 0);
+        })
+    }
+
     $(function() {
         $("#uploader").fineUploader({
             debug: true,
@@ -145,6 +126,10 @@
             },
 
             callbacks: {
+                onCancel: updateGallery,
+
+                onDeleteComplete: updateGallery,
+
                 onStatusChange: function() {
                     var submittedCount = this.getUploads({status: qq.status.SUBMITTED}).length;
 
@@ -159,7 +144,8 @@
                 onSubmitted: function(id, name) {
                     var $file = $(this.getItemByFileId(id)),
                         $thumbnail = $file.find(".qq-thumbnail-selector"),
-                        file = this.getFile(id);
+                        file = this.getFile(id),
+                        URL = window.URL || window.webkitURL;
 
                     timeInSecs[id] = file.timeInSecs;
 
@@ -168,10 +154,8 @@
                     sortFramesInUi();
 
                     durations[id] = $("#video")[0].duration;
-                    $thumbnail.click(function() {
-                        // TODO replace with carousel
-                        openLargerPreview($("#uploader"), 700, id, name);
-                    });
+                    $thumbnail.attr("href", URL.createObjectURL(file));
+                    updateGallery();
                 },
 
                 onUpload: function(id) {
