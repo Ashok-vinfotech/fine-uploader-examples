@@ -74,7 +74,7 @@ See the HTML file comments for more details.
 
 #previewDialog .modal-dialog
 {
-    width: 700px;
+    width: 800px;
 }
 
 .qq-upload-drop-area-active
@@ -109,6 +109,16 @@ LI.file-container
 {
     margin: 20px 0;
     width: auto;
+}
+
+.qq-upload-success .edit-description
+{
+    display: none;
+}
+
+.edit-description
+{
+    padding: 0px 5px;
 }
 
 .qq-upload-button

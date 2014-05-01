@@ -1,7 +1,11 @@
 (function($) {
-    var frameGrab,
-        framerate,
-        videoName;
+    var currentVideoId,
+        frameGrab,
+        framerates = {},
+        videoName,
+        descriptions = [],
+        timeInSecs = [],
+        durations = [];
 
     function isTouchDevice() {
         return "ontouchstart" in window || navigator.msMaxTouchPoints > 0;
@@ -45,10 +49,18 @@
     function maybeConstructFramegrab() {
         if (!frameGrab) {
             //TODO Replace window.prompt with nicer-looking modal
-            framerate = window.prompt("Please specify framerate");
+            if (!framerates[currentVideoId]) {
+                framerates[currentVideoId] = parseFloat(window.prompt("Please specify framerate"));
+            }
 
-            if (framerate) {
-                frameGrab = new FrameGrab({video: $("#video")[0], frame_rate: framerate});
+            if (framerates[currentVideoId]) {
+                frameGrab = new FrameGrab({
+                    video: $("#video")[0],
+                    frame_rate: framerates[currentVideoId],
+                    skip_solids: {
+                        enabled: true
+                    }
+                });
             }
         }
     }
@@ -63,9 +75,24 @@
         return filenameSansExt.replace(/[_-]/g, " ");
     }
 
-    $(function() {
-        var descriptions = [];
+    function sortFramesInUi() {
+        var ordered = $("[data-video-id='" + currentVideoId + "']").sort(function(a, b) {
+            var timeA = parseFloat($(a).data("time")),
+                timeB = parseFloat($(b).data("time"));
 
+            if (timeA < timeB) {
+                return 1;
+            }
+            if (timeA > timeB) {
+                return -1;
+            }
+            return 0;
+        });
+
+        $(".qq-upload-list-selector").prepend(ordered);
+    }
+
+    $(function() {
         $("#uploader").fineUploader({
             debug: true,
             autoUpload: false,
@@ -127,11 +154,30 @@
 
                 onSubmitted: function(id, name) {
                     var $file = $(this.getItemByFileId(id)),
-                        $thumbnail = $file.find(".qq-thumbnail-selector");
+                        $thumbnail = $file.find(".qq-thumbnail-selector"),
+                        file = this.getFile(id);
 
+                    timeInSecs[id] = file.timeInSecs;
+
+                    $file.data("time", timeInSecs[id]);
+                    $file.attr("data-video-id", currentVideoId);
+                    sortFramesInUi();
+
+                    durations[id] = $("#video")[0].duration;
                     $thumbnail.click(function() {
+                        // TODO replace with carousel
                         openLargerPreview($("#uploader"), 700, id, name);
                     });
+                },
+
+                onUpload: function(id) {
+                    var params = {
+                        description: descriptions[id],
+                        time: timeInSecs[id],
+                        duration: durations[id]
+                    };
+
+                    this.setParams(params, id);
                 }
             }
         })
@@ -143,7 +189,6 @@
 
                 if (description && description.trim().length > 0) {
                     descriptions[fileId] = description;
-                    $("#uploader").fineUploader("setParams", {description: description}, fileId);
                 }
             });
 
@@ -152,7 +197,11 @@
 
             frameGrab && frameGrab.grab_now("blob").then(
                 function success(result) {
-                    var timecode = FrameGrab.secs_to_timecode(result.time, framerate);
+                    var timecode = FrameGrab.secs_to_timecode(result.time, framerates[currentVideoId]);
+
+                    // setParams is a bit inflexible in FU.
+                    // TODO Add an `updateParams` and/or `getParams` API method to FU.
+                    result.container.timeInSecs = result.time;
 
                     $("#uploader").fineUploader("addBlobs", {
                         blob: result.container,
@@ -178,7 +227,11 @@
                     frameGrab.make_story("blob", imageCount).then(
                         function success(results) {
                             $.each(results, function() {
-                                var timecode = FrameGrab.secs_to_timecode(this.time, framerate);
+                                var timecode = FrameGrab.secs_to_timecode(this.time, framerates[currentVideoId]);
+
+                                // setParams is a bit inflexible in FU.
+                                // TODO Add an `updateParams` and/or `getParams` API method to FU.
+                                this.container.timeInSecs = this.time;
 
                                 // No guarantee on the order an array of files/blobs is submitted,
                                 // so we need to force the order for now.
@@ -214,6 +267,7 @@
 
                 FrameGrab.make_video(file, $("#video")[0]).then(
                     function success() {
+                        currentVideoId = name;
                         frameGrab = null;
                         videoName = reformatVideoFilename(name);
                         $("#video-drop-zone").removeClass("empty");
