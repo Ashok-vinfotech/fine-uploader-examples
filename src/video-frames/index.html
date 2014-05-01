@@ -5,14 +5,16 @@
     <meta charset="utf-8" />
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <!-- TODO add this next file to your project.  See http://fineuploader.com/downloads -->
     <link href="/fineuploader/fineuploader.css" rel="stylesheet" type="text/css"/>
     <link href="custom.css" rel="stylesheet" type="text/css"/>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <!-- TODO add this next file to your project.  See http://fineuploader.com/downloads -->
+
+    <script src="/fineuploader/rsvp.js"></script>
+    <script src="/fineuploader/frame-grab.js"></script>
     <script src="/fineuploader/all.fineuploader.js"></script>
+
     <script src="client.js"></script>
 
     <script type="text/template" id="qq-template">
@@ -25,10 +27,13 @@
                     <div class="file-info">
                         <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
                         <img class="qq-thumbnail-selector" qq-max-size="50" qq-server-scale>
+                        <i class="glyphicon glyphicon-info-sign edit-description"></i>
                         <span class="qq-upload-file-selector qq-upload-file"></span>
+                        <span class="qq-edit-filename-icon-selector qq-edit-filename-icon"></span>
+                        <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
                         <span class="qq-upload-size-selector qq-upload-size"></span>
                     </div>
-                    <button class="qq-upload-cancel-selector btn btn-small btn-warning" href="#">Cancel</button>
+                    <button class="qq-upload-cancel-selector btn btn-small btn-warning" href="#">Remove</button>
                     <button class="qq-upload-retry-selector qq-upload-retry btn btn-small" href="#">Retry</button>
                     <button class="qq-upload-delete-selector btn btn-small btn-danger" href="#">Delete</button>
                     <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
@@ -44,7 +49,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" ng-bind="previewTitle"></h4>
+                    <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body text-center">
                     <div class="progress progress-striped active">
@@ -64,7 +69,7 @@
                     <h4 class="modal-title">Error</h4>
                 </div>
                 <div class="modal-body">
-                    <div ng-bind="errorMessage"></div>
+                    <div class="error-message"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

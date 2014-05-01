@@ -3,18 +3,12 @@
         return "ontouchstart" in window || navigator.msMaxTouchPoints > 0;
     }
 
-    function applyNewText(propertyName, $scope, newText) {
-        $scope.$apply(function() {
-            $scope[propertyName] = newText;
-        });
-    }
-
-    function openLargerPreview($scope, $uploadContainer, size, fileId, name) {
+    function openLargerPreview($uploadContainer, size, fileId, name) {
         var $modal = $("#previewDialog"),
             $image = $("#previewContainer"),
             $progress = $modal.find(".progress");
 
-//        applyNewText("previewTitle", $scope, "Generating Preview for " + name);
+       $modal.find(".modal-title").text("Generating Preview for " + name);
         $image.hide();
         $progress.show();
 
@@ -25,14 +19,14 @@
                 // but before picture is transferred to img element as a result of resetting the img.src above.
                 setTimeout(function() {
                     $uploadContainer.fineUploader("drawThumbnail", fileId, $image, size).then(function() {
-                        applyNewText("previewTitle", $scope, "Preview for " + name);
+                        $modal.find(".modal-title").text("Preview for " + name);
 
                         $progress.hide();
                         $image.show();
                     },
                     function() {
                         $progress.hide();
-//                        applyNewText("previewTitle", $scope, "Preview not available");
+                        $modal.find(".modal-title").text("Preview not available");
                     });
                 }, 0);
             })
@@ -40,8 +34,11 @@
     }
 
     $(function() {
+        var descriptions = [];
+
         $("#uploader").fineUploader({
             debug: true,
+            autoUpload: false,
             request: {
                 endpoint: "/uploads",
                 params: {
@@ -56,7 +53,13 @@
                 }
             },
 
+            deleteFile: {
+                endpoint: "/uploads",
+                enabled: true
+            },
+
             display: {
+                fileSizeOnSubmit: true,
                 prependFiles: true
             },
 
@@ -77,7 +80,7 @@
             },
 
             showMessage: function(message) {
-    //            applyNewText("errorMessage", $scope, message);
+                $("#errorDialog").find(".error-message").text(message);
                 $("#errorDialog").modal("show");
             },
 
@@ -87,10 +90,21 @@
                         $thumbnail = $file.find(".qq-thumbnail-selector");
 
                     $thumbnail.click(function() {
-                        openLargerPreview($scope, $(element), largePreviewSize, id, name);
+                        openLargerPreview($("#uploader"), 500, id, name);
                     });
                 }
             }
-        });
+        })
+
+            // TODO replace window.prompt with a nicer-looking modal
+            .on("click", ".edit-description", function() {
+                var fileId = $("#uploader").fineUploader("getId", this),
+                    description = window.prompt("Description for this item", descriptions[fileId] === undefined ? "" : descriptions[fileId]);
+
+                if (description && description.trim().length > 0) {
+                    descriptions[fileId] = description;
+                    $("#uploader").fineUploader("setParams", {description: description}, fileId);
+                }
+            });
     });
 })(jQuery);
