@@ -204,7 +204,7 @@
                     },
 
                     function failure() {
-                        showError("Unsupported video type");
+                        showError("'" + name + "' uses an unsupported video codec or is not a video file");
                     }
                 )
             });
