@@ -172,12 +172,14 @@
 
                 onUpload: function(id) {
                     var params = {
-                        description: descriptions[id],
-                        time: timeInSecs[id],
-                        duration: durations[id]
-                    };
+                            description: descriptions[id],
+                            time: timeInSecs[id],
+                            duration: durations[id]
+                        },
+                        $file = $(this.getItemByFileId(id));
 
                     this.setParams(params, id);
+                    $file(".qq-upload-cancel-selector").text("Cancel");
                 }
             }
         })
