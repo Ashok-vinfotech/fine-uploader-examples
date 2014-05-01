@@ -1,5 +1,7 @@
 (function($) {
-    var frameGrab;
+    var frameGrab,
+        framerate,
+        videoName;
 
     function isTouchDevice() {
         return "ontouchstart" in window || navigator.msMaxTouchPoints > 0;
@@ -43,12 +45,22 @@
     function maybeConstructFramegrab() {
         if (!frameGrab) {
             //TODO Replace window.prompt with nicer-looking modal
-            var framerate = window.prompt("Please specify framerate");
+            framerate = window.prompt("Please specify framerate");
 
             if (framerate) {
                 frameGrab = new FrameGrab({video: $("#video")[0], frame_rate: framerate});
             }
         }
+    }
+    function reformatVideoFilename(originalName) {
+        var filenameSansExt = originalName,
+            extIdx = filenameSansExt.lastIndexOf(".");
+
+        if (extIdx > 0) {
+            filenameSansExt = filenameSansExt.substr(0, extIdx);
+        }
+
+        return filenameSansExt.replace(/[_-]/g, " ");
     }
 
     $(function() {
@@ -107,7 +119,7 @@
                         $thumbnail = $file.find(".qq-thumbnail-selector");
 
                     $thumbnail.click(function() {
-                        openLargerPreview($("#uploader"), 500, id, name);
+                        openLargerPreview($("#uploader"), 700, id, name);
                     });
                 }
             }
@@ -128,8 +140,13 @@
             maybeConstructFramegrab();
 
             frameGrab && frameGrab.grab_now("blob").then(
-                function success(blob) {
-                    $("#uploader").fineUploader("addBlobs", blob);
+                function success(result) {
+                    var timecode = FrameGrab.secs_to_timecode(result.time, framerate);
+
+                    $("#uploader").fineUploader("addBlobs", {
+                        blob: result.container,
+                        name: videoName + " - " + timecode
+                    });
                 },
 
                 function failure(reason) {
@@ -148,8 +165,18 @@
 
                 if (imageCount > 0) {
                     frameGrab.make_story("blob", imageCount).then(
-                        function success(blobs) {
-                            $("#uploader").fineUploader("addBlobs", blobs);
+                        function success(results) {
+                            $.each(results, function() {
+                                var timecode = FrameGrab.secs_to_timecode(this.time, framerate);
+
+                                // No guarantee on the order an array of files/blobs is submitted,
+                                // so we need to force the order for now.
+                                // TODO Adjust Fine Uploader code to ensure submitted order is respected, so we can pass in all blobs at once via an array
+                                $("#uploader").fineUploader("addBlobs", {
+                                    blob: this.container,
+                                    name: videoName + " - " + timecode
+                                });
+                            });
                         },
 
                         function failure(reason) {
@@ -166,9 +193,13 @@
             }
         })
             .on("processingDroppedFilesComplete", function(event, files, dropTarget) {
-                FrameGrab.make_video(files[0], $("#video")[0]).then(
+                var file = files[0],
+                    name = file.name;
+
+                FrameGrab.make_video(file, $("#video")[0]).then(
                     function success() {
                         frameGrab = null;
+                        videoName = reformatVideoFilename(name);
                         $("#video-drop-zone").removeClass("empty");
                     },
 
