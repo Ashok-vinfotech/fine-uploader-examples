@@ -168,11 +168,14 @@
 
                 onUpload: function(id) {
                     var params = {
-                            description: descriptions[id],
                             time: timeInSecs[id],
                             duration: durations[id]
                         },
                         $file = $(this.getItemByFileId(id));
+
+                    if (descriptions[id]) {
+                        params.description = descriptions[id];
+                    }
 
                     this.setParams(params, id);
                     $file.find(".qq-upload-cancel-selector").text("Cancel");
