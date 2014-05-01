@@ -17,7 +17,7 @@ See the HTML file comments for more details.
     font-size: 36px;
 }
 
-.uploader-drop-zone
+#video-drop-zone.empty
 {
     /* Static height drop zone that also contains the file list, with a border */
     height: 300px;
@@ -26,9 +26,42 @@ See the HTML file comments for more details.
     -moz-border-radius: 8px;
     border-radius: 8px;
     text-align: center;
+}
 
-    /* Make the drop zone scollable */
-    overflow-y: scroll;
+#video-drop-zone .drop-zone-text
+{
+    display: none;
+}
+
+#video-drop-zone.empty .drop-zone-text
+{
+    /* Vertically & horizontally center the dynamically generated drop zone message
+    inside the drop zone & make it a bit presentable */
+    display: inline;
+    position: absolute;
+    vertical-align: middle;
+    line-height: 300px;
+    font-size: 200%;
+    width: 100%;
+    left: 0;
+    color: #cccccc;
+}
+
+.qq-upload-drop-area-active
+{
+    z-index: 10;
+    opacity: .7;
+}
+
+.qq-upload-drop-area-active #video
+{
+    z-index: 9;
+}
+
+#video
+{
+    display: block;
+    margin: 0 auto;
 }
 
 LI.file-container
@@ -62,19 +95,6 @@ LI.file-container
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-}
-
-.drop-zone-text
-{
-    /* Vertically & horizontally center the dynamically generated drop zone message
-    inside the drop zone & make it a bit presentable */
-    position: absolute;
-    vertical-align: middle;
-    line-height: 300px;
-    font-size: 200%;
-    width: 100%;
-    left: 0;
-    color: #cccccc;
 }
 
 .file-info
@@ -157,42 +177,4 @@ h4
     margin-top:30px;
     padding: 20px 40px;
     line-height: 18px;
-}
-
-
-
-.footer
-{
-    padding: 70px 0;
-    border-top: 1px solid #e5e5e5;
-    background-color: #525252;
-    color :#eee;
-    position: relative;
-    left: 0;
-    bottom: 0;
-    height: 120px;
-    width: 100%;
-    margin-top: 60px;
-}
-.footer p
-{
-    margin-bottom: 0;
-    color: #eee;
-}
-.footer-links
-{
-    margin: 10px 0;
-}
-.footer-links li
-{
-    display: inline;
-    margin-right: 10px;
-}
-.footer a
-{
-    color: #66ccdd;
-}
-.widenIcon
-{
-    margin: -3px 0px 0px 4px;
 }

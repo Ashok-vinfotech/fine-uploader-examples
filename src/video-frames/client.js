@@ -106,5 +106,26 @@
                     $("#uploader").fineUploader("setParams", {description: description}, fileId);
                 }
             });
+
+        $("#video").hide();
+
+        $("#video-drop-zone").fineUploaderDnd({
+            classes: {
+                dropActive: "qq-upload-drop-area-active"
+            }
+        })
+            .on("processingDroppedFilesComplete", function(event, files, dropTarget) {
+                FrameGrab.make_video(files[0], $("#video")[0]).then(
+                    function success() {
+                        $("#video-drop-zone").removeClass("empty");
+                        $("#video").show();
+                    },
+
+                    function failure() {
+                        $("#errorDialog").find(".error-message").text("Unsupported video type");
+                        $("#errorDialog").modal("show");
+                    }
+                )
+            });
     });
 })(jQuery);
