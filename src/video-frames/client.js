@@ -1,4 +1,6 @@
 (function($) {
+    var frameGrab;
+
     function isTouchDevice() {
         return "ontouchstart" in window || navigator.msMaxTouchPoints > 0;
     }
@@ -38,9 +40,19 @@
         $("#errorDialog").modal("show");
     }
 
+    function maybeConstructFramegrab() {
+        if (!frameGrab) {
+            //TODO Replace window.prompt with nicer-looking modal
+            var framerate = window.prompt("Please specify framerate");
+
+            if (framerate) {
+                frameGrab = new FrameGrab({video: $("#video")[0], frame_rate: framerate});
+            }
+        }
+    }
+
     $(function() {
-        var descriptions = [],
-            frameGrab;
+        var descriptions = [];
 
         $("#uploader").fineUploader({
             debug: true,
@@ -101,9 +113,9 @@
             }
         })
 
-            // TODO replace window.prompt with a nicer-looking modal
             .on("click", ".edit-description", function() {
                 var fileId = $("#uploader").fineUploader("getId", this),
+                    // TODO replace window.prompt with a nicer-looking modal
                     description = window.prompt("Description for this item", descriptions[fileId] === undefined ? "" : descriptions[fileId]);
 
                 if (description && description.trim().length > 0) {
@@ -113,18 +125,9 @@
             });
 
         $(".grab-frame").click(function() {
-            if (!frameGrab) {
-                //TODO Replace window.prompt with nicer-looking modal
-                var framerate = window.prompt("Please specify framerate");
+            maybeConstructFramegrab();
 
-                if (!framerate) {
-                    return;
-                }
-
-                frameGrab = new FrameGrab({video: $("#video")[0], frame_rate: framerate});
-            }
-
-            frameGrab.grab_now("blob").then(
+            frameGrab && frameGrab.grab_now("blob").then(
                 function success(blob) {
                     $("#uploader").fineUploader("addBlobs", blob);
                 },
@@ -133,6 +136,28 @@
                     showError(reason);
                 }
             )
+        });
+
+        $(".tell-story").click(function() {
+            var imageCount = 0;
+
+            maybeConstructFramegrab();
+
+            if (frameGrab) {
+                imageCount = parseInt(window.prompt("How many images?"));
+
+                if (imageCount > 0) {
+                    frameGrab.make_story("blob", imageCount).then(
+                        function success(blobs) {
+                            $("#uploader").fineUploader("addBlobs", blobs);
+                        },
+
+                        function failure(reason) {
+                            showError(reason);
+                        }
+                    )
+                }
+            }
         });
 
         $("#video-drop-zone").fineUploaderDnd({

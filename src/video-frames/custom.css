@@ -37,6 +37,7 @@ See the HTML file comments for more details.
 {
     font-size: 1.5em;
     cursor: pointer;
+    padding: 10px 20px;
 }
 
 #video-drop-zone #video-container
