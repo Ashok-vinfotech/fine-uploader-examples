@@ -179,7 +179,7 @@
                         $file = $(this.getItemByFileId(id));
 
                     this.setParams(params, id);
-                    $file(".qq-upload-cancel-selector").text("Cancel");
+                    $file.find(".qq-upload-cancel-selector").text("Cancel");
                 }
             }
         })
