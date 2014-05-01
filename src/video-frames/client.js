@@ -114,6 +114,17 @@
             },
 
             callbacks: {
+                onStatusChange: function() {
+                    var submittedCount = this.getUploads({status: qq.status.SUBMITTED}).length;
+
+                    if (submittedCount) {
+                        $("#start-upload-button").show();
+                    }
+                    else {
+                        $("#start-upload-button").hide();
+                    }
+                },
+
                 onSubmitted: function(id, name) {
                     var $file = $(this.getItemByFileId(id)),
                         $thumbnail = $file.find(".qq-thumbnail-selector");
@@ -186,6 +197,11 @@
                 }
             }
         });
+
+        $("#start-upload-button").hide()
+            .click(function() {
+                $("#uploader").fineUploader("uploadStoredFiles");
+            });
 
         $("#video-drop-zone").fineUploaderDnd({
             classes: {

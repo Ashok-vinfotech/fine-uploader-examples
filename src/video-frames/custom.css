@@ -127,6 +127,11 @@ LI.file-container
     width: 500px;
 }
 
+#start-upload-button
+{
+    margin: 15px 0px;
+}
+
 IMG
 {
     vertical-align: middle;
@@ -189,16 +194,4 @@ h4
     width: 80%;
     max-width: 1024px;
     margin: 0 auto;
-}
-
-.sign-in-buttons
-{
-    text-align: center;
-}
-
-.hero-unit
-{
-    margin-top:30px;
-    padding: 20px 40px;
-    line-height: 18px;
 }
