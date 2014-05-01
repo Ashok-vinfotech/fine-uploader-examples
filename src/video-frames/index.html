@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Frame Uploader</title>
+    <meta charset="utf-8" />
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <!-- TODO add this next file to your project.  See http://fineuploader.com/downloads -->
+    <link href="/fineuploader/fineuploader.css" rel="stylesheet" type="text/css"/>
+    <link href="custom.css" rel="stylesheet" type="text/css"/>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <!-- TODO add this next file to your project.  See http://fineuploader.com/downloads -->
+    <script src="/fineuploader/all.fineuploader.js"></script>
+    <script src="client.js"></script>
+
+    <script type="text/template" id="qq-template">
+        <div class="qq-uploader-selector qq-uploader">
+            <ul class="qq-upload-list-selector qq-upload-list">
+                <li class="file-container">
+                    <div class="qq-progress-bar-container-selector progress">
+                        <div class="qq-progress-bar-selector progress-bar"></div>
+                    </div>
+                    <div class="file-info">
+                        <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                        <img class="qq-thumbnail-selector" qq-max-size="50" qq-server-scale>
+                        <span class="qq-upload-file-selector qq-upload-file"></span>
+                        <span class="qq-upload-size-selector qq-upload-size"></span>
+                    </div>
+                    <button class="qq-upload-cancel-selector btn btn-small btn-warning" href="#">Cancel</button>
+                    <button class="qq-upload-retry-selector qq-upload-retry btn btn-small" href="#">Retry</button>
+                    <button class="qq-upload-delete-selector btn btn-small btn-danger" href="#">Delete</button>
+                    <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                </li>
+            </ul>
+        </div>
+    </script>
+
+</head>
+<body>
+    <div id="previewDialog" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" ng-bind="previewTitle"></h4>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar" role="progressbar" style="width: 100%;"></div>
+                    </div>
+                    <img id="previewContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorDialog" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Error</h4>
+                </div>
+                <div class="modal-body">
+                    <div ng-bind="errorMessage"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="uploader"></div>
+</body>
+</html>
