@@ -6,7 +6,8 @@
         timeInSecs = [],
         durations = [];
 
-    function showPleaseWait() {
+    function showPleaseWait(type) {
+        $("#pleaseWaitDialog .modal-title").text("Generating " + type + "...");
         $("#pleaseWaitDialog").modal("show");
     }
 
@@ -24,7 +25,7 @@
             frameGrab = new FrameGrab({
                 video: $("#video")[0],
                 skip_solids: {
-                    enabled: true
+                    enabled: false
                 }
             });
         }
@@ -187,12 +188,18 @@
                 });
             });
 
+        // TODO eliminate redundancies w/ .tell-story
         $(".grab-frame").click(function() {
+            var pleaseWaitTimer = setTimeout(function() {
+                showPleaseWait("image");
+            }, 500);
+
             maybeConstructFramegrab();
 
             frameGrab && frameGrab.grab_now("blob").then(
                 function success(result) {
-                    var formattedTime = FrameGrab.secs_to_formatted_time_string(result.time, 2);
+                    // TODO This is kludgey.  Modify frame-grab to limit units in returned time string
+                    var formattedTime = FrameGrab.secs_to_formatted_time_string(result.time, 2).replace("00:", "");
 
                     // setParams is a bit inflexible in FU.
                     // TODO Add an `updateParams` and/or `getParams` API method to FU.
@@ -203,17 +210,21 @@
                         // TODO determine the correct extension based on `Blob.type`.
                         name: videoName + " - " + formattedTime + ".png"
                     });
+
+                    clearTimeout(pleaseWaitTimer);
+                    hidePleaseWait();
                 },
 
                 function failure(reason) {
+                    clearTimeout(pleaseWaitTimer);
+                    hidePleaseWait();
                     showError(reason);
                 }
             )
         });
 
+        // TODO eliminate redundancies w/ .grab-frame
         $(".tell-story").click(function() {
-            var imageCount = 0;
-
             maybeConstructFramegrab();
 
             if (frameGrab) {
@@ -224,12 +235,13 @@
                         var imageCount = parseInt(result);
 
                         if (imageCount > 0) {
-                            showPleaseWait();
+                            showPleaseWait("story");
 
                             frameGrab.make_story("blob", imageCount).then(
                                 function success(results) {
                                     $.each(results, function() {
-                                        var formattedTime = FrameGrab.secs_to_formatted_time_string(this.time, 2);
+                                        // TODO This is kludgey.  Modify frame-grab to limit units in returned time string
+                                        var formattedTime = FrameGrab.secs_to_formatted_time_string(result.time, 2).replace("00:", "");
 
                                         hidePleaseWait();
 
