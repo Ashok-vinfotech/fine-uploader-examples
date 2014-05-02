@@ -70,7 +70,6 @@
 
     $(function() {
         $("#uploader").fineUploader({
-            debug: true,
             autoUpload: false,
             request: {
                 endpoint: "/uploads",

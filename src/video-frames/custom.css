@@ -51,6 +51,12 @@ See the HTML file comments for more details.
     text-align: center;
 }
 
+VIDEO
+{
+    max-width: 1000px;
+    height: auto;
+}
+
 #video-drop-zone #video-container #video
 {
     display: block;
