@@ -241,7 +241,7 @@
                                 function success(results) {
                                     $.each(results, function() {
                                         // TODO This is kludgey.  Modify frame-grab to limit units in returned time string
-                                        var formattedTime = FrameGrab.secs_to_formatted_time_string(result.time, 2).replace("00:", "");
+                                        var formattedTime = FrameGrab.secs_to_formatted_time_string(this.time, 2).replace("00:", "");
 
                                         hidePleaseWait();
 
