@@ -200,7 +200,8 @@
 
                     $("#uploader").fineUploader("addBlobs", {
                         blob: result.container,
-                        name: videoName + " - " + formattedTime
+                        // TODO determine the correct extension based on `Blob.type`.
+                        name: videoName + " - " + formattedTime + ".png"
                     });
                 },
 
@@ -241,7 +242,8 @@
                                         // TODO Adjust Fine Uploader code to ensure submitted order is respected, so we can pass in all blobs at once via an array
                                         $("#uploader").fineUploader("addBlobs", {
                                             blob: this.container,
-                                            name: videoName + " - " + formattedTime
+                                            // TODO determine the correct extension based on `Blob.type`.
+                                            name: videoName + " - " + formattedTime + ".png"
                                         });
                                     });
                                 },
