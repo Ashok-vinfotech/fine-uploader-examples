@@ -36,8 +36,12 @@ See the HTML file comments for more details.
 #video-container .glyphicon
 {
     font-size: 1.5em;
-    cursor: pointer;
     padding: 10px 20px;
+}
+
+.glyphicon
+{
+    cursor: pointer;
 }
 
 #video-drop-zone #video-container
@@ -72,6 +76,11 @@ See the HTML file comments for more details.
     color: #cccccc;
 }
 
+.frame-thumb
+{
+    cursor: pointer;
+}
+
 .qq-upload-drop-area-active
 {
     z-index: 10;
@@ -102,7 +111,7 @@ LI.file-container
 
 #uploader
 {
-    width: 625px;
+    width: 700px;
     margin: 0 auto;
 }
 
@@ -129,7 +138,7 @@ LI.file-container
 .file-info
 {
     display: inline-block;
-    width: 500px;
+    width: 575px;
 }
 
 #start-upload-button

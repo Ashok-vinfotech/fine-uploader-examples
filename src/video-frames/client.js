@@ -116,6 +116,13 @@
                 showError(message);
             },
 
+            formatFileName: function(fileOrBlobName) {
+                if (fileOrBlobName !== undefined && fileOrBlobName.length > 43) {
+                    fileOrBlobName = fileOrBlobName.slice(0, 24) + "..." + fileOrBlobName.slice(-19);
+                }
+                return fileOrBlobName;
+            },
+
             callbacks: {
                 onCancel: updateGallery,
 
