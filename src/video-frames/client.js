@@ -168,12 +168,17 @@
 
             .on("click", ".edit-description", function() {
                 var fileId = $("#uploader").fineUploader("getId", this),
-                    // TODO replace window.prompt with a nicer-looking modal
-                    description = window.prompt("Description for this item", descriptions[fileId] === undefined ? "" : descriptions[fileId]);
+                    filename = $("#uploader").fineUploader("getName", fileId);
 
-                if (description && description.trim().length > 0) {
-                    descriptions[fileId] = description;
-                }
+                bootbox.prompt({
+                    title: "Please enter or edit the description for '" + filename + "'",
+                    value: descriptions[fileId],
+                    callback: function(description) {
+                        if (description && description.trim().length > 0) {
+                            descriptions[fileId] = description;
+                        }
+                    }
+                });
             });
 
         $(".grab-frame").click(function() {
@@ -205,38 +210,44 @@
             maybeConstructFramegrab();
 
             if (frameGrab) {
-                imageCount = parseInt(window.prompt("How many images?"));
+                bootbox.prompt({
+                    title: "How many images shall I generate?",
+                    inputType: "number",
+                    callback: function(result) {
+                        var imageCount = parseInt(result);
 
-                if (imageCount > 0) {
-                    showPleaseWait();
+                        if (imageCount > 0) {
+                            showPleaseWait();
 
-                    frameGrab.make_story("blob", imageCount).then(
-                        function success(results) {
-                            $.each(results, function() {
-                                var formattedTime = FrameGrab.secs_to_formatted_time_string(this.time, 2);
+                            frameGrab.make_story("blob", imageCount).then(
+                                function success(results) {
+                                    $.each(results, function() {
+                                        var formattedTime = FrameGrab.secs_to_formatted_time_string(this.time, 2);
 
-                                hidePleaseWait();
+                                        hidePleaseWait();
 
-                                // setParams is a bit inflexible in FU.
-                                // TODO Add an `updateParams` and/or `getParams` API method to FU.
-                                this.container.timeInSecs = this.time;
+                                        // setParams is a bit inflexible in FU.
+                                        // TODO Add an `updateParams` and/or `getParams` API method to FU.
+                                        this.container.timeInSecs = this.time;
 
-                                // No guarantee on the order an array of files/blobs is submitted,
-                                // so we need to force the order for now.
-                                // TODO Adjust Fine Uploader code to ensure submitted order is respected, so we can pass in all blobs at once via an array
-                                $("#uploader").fineUploader("addBlobs", {
-                                    blob: this.container,
-                                    name: videoName + " - " + formattedTime
-                                });
-                            });
-                        },
+                                        // No guarantee on the order an array of files/blobs is submitted,
+                                        // so we need to force the order for now.
+                                        // TODO Adjust Fine Uploader code to ensure submitted order is respected, so we can pass in all blobs at once via an array
+                                        $("#uploader").fineUploader("addBlobs", {
+                                            blob: this.container,
+                                            name: videoName + " - " + formattedTime
+                                        });
+                                    });
+                                },
 
-                        function failure(reason) {
-                            hidePleaseWait();
-                            showError(reason);
+                                function failure(reason) {
+                                    hidePleaseWait();
+                                    showError(reason);
+                                }
+                            )
                         }
-                    )
-                }
+                    }
+                });
             }
         });
 
