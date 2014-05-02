@@ -17,7 +17,8 @@
  *  - mkdirp (for "mkdir -p" support)
  */
 
-var //dependencies
+var PORT = 8000,
+    //dependencies
     express = require("express"),
     fs = require("fs"),
     rimraf = require("rimraf"),
@@ -29,11 +30,12 @@ var //dependencies
     assetsPath = __dirname + "/assets/",
     placeholdersPath = assetsPath + "placeholders/",
     uploadedFilesPath = assetsPath + "uploadedFiles/",
-    chunkDirName = "chunks"
+    chunkDirName = "chunks";
 
 
 app.use(express.bodyParser());
-app.listen(8000);
+app.listen(PORT);
+console.log("Express server started on port %s", PORT);
 
 // routes
 app.use(express.static(__dirname));
