@@ -1,7 +1,6 @@
 (function($) {
     var currentVideoId,
         frameGrab,
-        framerates = {},
         videoName,
         descriptions = [],
         timeInSecs = [],
@@ -22,20 +21,12 @@
 
     function maybeConstructFramegrab() {
         if (!frameGrab) {
-            //TODO Replace window.prompt with nicer-looking modal
-            if (!framerates[currentVideoId]) {
-                framerates[currentVideoId] = parseFloat(window.prompt("Please specify framerate"));
-            }
-
-            if (framerates[currentVideoId]) {
-                frameGrab = new FrameGrab({
-                    video: $("#video")[0],
-                    frame_rate: framerates[currentVideoId],
-                    skip_solids: {
-                        enabled: true
-                    }
-                });
-            }
+            frameGrab = new FrameGrab({
+                video: $("#video")[0],
+                skip_solids: {
+                    enabled: true
+                }
+            });
         }
     }
     function reformatVideoFilename(originalName) {
@@ -190,7 +181,7 @@
 
             frameGrab && frameGrab.grab_now("blob").then(
                 function success(result) {
-                    var timecode = FrameGrab.secs_to_timecode(result.time, framerates[currentVideoId]);
+                    var formattedTime = FrameGrab.secs_to_formatted_time_string(result.time, 2);
 
                     // setParams is a bit inflexible in FU.
                     // TODO Add an `updateParams` and/or `getParams` API method to FU.
@@ -198,7 +189,7 @@
 
                     $("#uploader").fineUploader("addBlobs", {
                         blob: result.container,
-                        name: videoName + " - " + timecode
+                        name: videoName + " - " + formattedTime
                     });
                 },
 
@@ -222,9 +213,9 @@
                     frameGrab.make_story("blob", imageCount).then(
                         function success(results) {
                             $.each(results, function() {
-                                hidePleaseWait();
+                                var formattedTime = FrameGrab.secs_to_formatted_time_string(this.time, 2);
 
-                                var timecode = FrameGrab.secs_to_timecode(this.time, framerates[currentVideoId]);
+                                hidePleaseWait();
 
                                 // setParams is a bit inflexible in FU.
                                 // TODO Add an `updateParams` and/or `getParams` API method to FU.
@@ -235,7 +226,7 @@
                                 // TODO Adjust Fine Uploader code to ensure submitted order is respected, so we can pass in all blobs at once via an array
                                 $("#uploader").fineUploader("addBlobs", {
                                     blob: this.container,
-                                    name: videoName + " - " + timecode
+                                    name: videoName + " - " + formattedTime
                                 });
                             });
                         },
